@@ -7,8 +7,7 @@ import {
   DialogActions,
   useMediaQuery,
   useTheme,
-  Slide,
-  Paper,
+  SwipeableDrawer,
   Box,
   List,
   ListItem,
@@ -40,17 +39,15 @@ const StyledMenuButton = styled(Button)(({ theme }) => ({
   transition: "all 0.3s ease",
 }));
 
-const ActionSheet = styled(Paper)(({ theme }) => ({
-  position: "fixed",
-  bottom: 0,
-  left: 0,
-  right: 0,
-  borderTopLeftRadius: "24px",
-  borderTopRightRadius: "24px",
-  padding: theme.spacing(2),
-  boxShadow: theme.shadows[24],
-  background: theme.palette.background.paper,
-  zIndex: theme.zIndex.modal,
+const Puller = styled(Box)(({ theme }) => ({
+  width: 40,
+  height: 6,
+  backgroundColor:
+    theme.palette.mode === "dark"
+      ? "rgba(255, 255, 255, 0.3)"
+      : "rgba(0, 0, 0, 0.3)",
+  borderRadius: 3,
+  margin: "8px auto",
 }));
 
 const SettingsMenu = () => {
@@ -58,21 +55,15 @@ const SettingsMenu = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const handleClick = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleClick = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   return (
     <Box
       sx={{
+        display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        display: "flex",
-        flexDirection: "column",
         height: "80vh",
       }}
     >
@@ -85,93 +76,123 @@ const SettingsMenu = () => {
       </StyledMenuButton>
 
       {/* Desktop Dialog */}
-      {!isMobile && (
-        <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-          <DialogTitle>Settings</DialogTitle>
-          <DialogContent dividers>
-            <List>
+      {isMobile ? (
+        <SwipeableDrawer
+          anchor="bottom"
+          open={open}
+          onClose={handleClose}
+          onOpen={handleClick}
+          disableSwipeToOpen={false}
+          PaperProps={{
+            sx: {
+              borderTopLeftRadius: 16,
+              borderTopRightRadius: 16,
+              maxWidth: 600,
+              mx: "auto",
+              overflow: "visible",
+            },
+          }}
+        >
+          <Puller />
+          <Box sx={{ px: 2, pb: 2 }}>
+            <List disablePadding>
               <ListItem disablePadding>
                 <ListItemButton
                   onClick={() => console.log("Advanced customization")}
+                  sx={{ py: 2, borderRadius: 1 }}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon sx={{ minWidth: 40 }}>
                     <DesignServicesIcon color="primary" />
                   </ListItemIcon>
                   <ListItemText
                     primary="Option A"
                     secondary="Advanced customization"
+                    slotProps={{ primary: { fontWeight: 500 } }}
                   />
                 </ListItemButton>
               </ListItem>
-              <Divider />
+              <Divider sx={{ my: 1 }} />
               <ListItem disablePadding>
                 <ListItemButton
                   onClick={() => console.log("Security settings")}
+                  sx={{ py: 2, borderRadius: 1 }}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon sx={{ minWidth: 40 }}>
                     <SecurityIcon color="primary" />
                   </ListItemIcon>
                   <ListItemText
                     primary="Option B"
                     secondary="Security settings"
+                    slotProps={{ primary: { fontWeight: 500 } }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </List>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={handleClose}
+              sx={{
+                mt: 2,
+                borderRadius: "12px",
+                py: 1.5,
+                fontWeight: 500,
+                fontSize: "0.875rem",
+              }}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </SwipeableDrawer>
+      ) : (
+        <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+          <DialogTitle sx={{ fontWeight: 600 }}>Settings</DialogTitle>
+          <DialogContent dividers>
+            <List disablePadding>
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={() => console.log("Advanced customization")}
+                  sx={{ py: 1.5, borderRadius: 1 }}
+                >
+                  <ListItemIcon sx={{ minWidth: 40 }}>
+                    <DesignServicesIcon color="primary" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Option A"
+                    secondary="Advanced customization"
+                    slotProps={{ primary: { fontWeight: 500 } }}
+                  />
+                </ListItemButton>
+              </ListItem>
+              <Divider sx={{ my: 1 }} />
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={() => console.log("Security settings")}
+                  sx={{ py: 1.5, borderRadius: 1 }}
+                >
+                  <ListItemIcon sx={{ minWidth: 40 }}>
+                    <SecurityIcon color="primary" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Option B"
+                    secondary="Security settings"
+                    slotProps={{ primary: { fontWeight: 500 } }}
                   />
                 </ListItemButton>
               </ListItem>
             </List>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} variant="outlined" fullWidth>
+          <DialogActions sx={{ p: 2 }}>
+            <Button
+              onClick={handleClose}
+              variant="outlined"
+              fullWidth
+              sx={{ borderRadius: "12px", py: 1 }}
+            >
               Close
             </Button>
           </DialogActions>
         </Dialog>
-      )}
-
-      {/* Mobile Action Sheet */}
-      {isMobile && (
-        <Slide direction="up" in={open} mountOnEnter unmountOnExit>
-          <ActionSheet>
-            <List>
-              <ListItem disablePadding>
-                <ListItemButton
-                  onClick={() => console.log("Advanced customization")}
-                >
-                  <ListItemIcon>
-                    <DesignServicesIcon color="primary" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Option A"
-                    secondary="Advanced customization"
-                  />
-                </ListItemButton>
-              </ListItem>
-              <Divider />
-              <ListItem disablePadding>
-                <ListItemButton
-                  onClick={() => console.log("Security settings")}
-                >
-                  <ListItemIcon>
-                    <SecurityIcon color="primary" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Option B"
-                    secondary="Security settings"
-                  />
-                </ListItemButton>
-              </ListItem>
-            </List>
-            <Box sx={{ p: 2 }}>
-              <Button
-                fullWidth
-                variant="outlined"
-                onClick={handleClose}
-                sx={{ mt: 1, borderRadius: "12px", py: 1.5 }}
-              >
-                Cancel
-              </Button>
-            </Box>
-          </ActionSheet>
-        </Slide>
       )}
     </Box>
   );
