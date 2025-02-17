@@ -9,21 +9,29 @@ const auctionPlayerSlice = createSlice({
   name: "auctionPlayer",
   initialState,
   reducers: {
-    deletePlayer: (state, action: PayloadAction<number>) => {
+    deletePlayerFromAuction: (state, action: PayloadAction<number>) => {
       const updatedPlayers = state.filter(
         (player) => player.id !== action.payload
       );
-      auctionService.storePlayersOfAuction(updatedPlayers);
+      auctionService.storePlayersForAuction(updatedPlayers);
       return updatedPlayers;
     },
-    addPlayer: (state, action: PayloadAction<Player>) => {
+    addPlayerToAuction: (state, action: PayloadAction<Player>) => {
       state.push(action.payload);
-      auctionService.storePlayersOfAuction(state);
+      auctionService.storePlayersForAuction(state);
+    },
+    addUnsoldPlayersToAuction: (state, action: PayloadAction<Player[]>) => {
+      state.push(...action.payload);
+      auctionService.storePlayersForAuction(state);
     },
   },
 });
 
 export const getAllAuctionPlayers = (state: RootState) => state.auction;
 
-export const { deletePlayer, addPlayer } = auctionPlayerSlice.actions;
+export const {
+  deletePlayerFromAuction,
+  addPlayerToAuction,
+  addUnsoldPlayersToAuction,
+} = auctionPlayerSlice.actions;
 export default auctionPlayerSlice.reducer;

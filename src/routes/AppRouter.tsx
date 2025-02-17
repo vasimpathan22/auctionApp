@@ -7,11 +7,13 @@ import {
 } from "@mui/icons-material";
 import { CssBaseline } from "@mui/material";
 import MainLayout from "../layout/MainLayout";
-import Home from "../components/Home";
-import Auction from "../components/Auction";
-import AddPlayers from "../components/AddPlayers";
-import NamePick from "../components/NamePick";
-import SettingsMenu from "../components/SettingsMenu";
+import {
+  AddPlayers,
+  Auction,
+  Home,
+  SettingsMenu,
+  ManagePlayers,
+} from "../components";
 
 const menuItems = [
   { text: "Home", icon: <HomeIcon />, path: "/" },
@@ -28,8 +30,9 @@ const AppRouter = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/addplayer" element={<AddPlayers />} />
-          <Route path="/auction" element={<NamePick />} />
+          <Route path="/auction" element={<Auction />} />
           <Route path="/settings" element={<SettingsMenu />} />
+          <Route path="/managePlayers" element={<ManagePlayers />} />
         </Routes>
       </MainLayout>
     </>

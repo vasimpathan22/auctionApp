@@ -1,8 +1,10 @@
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../app/hooks";
 
 const Home = () => {
   const navigate = useNavigate();
+  const auctionPlayers = useAppSelector((state) => state.auction);
 
   const handleAddPlayersClick = () => {
     navigate("/addplayer");
@@ -74,6 +76,7 @@ const Home = () => {
             backgroundColor: "#4CAF50",
             "&:hover": { backgroundColor: "#388E3C" },
           }}
+          disabled={auctionPlayers.length === 0}
           onClick={handleAuctionClick}
         >
           Take to the Auction

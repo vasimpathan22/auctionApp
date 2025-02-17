@@ -15,15 +15,14 @@ import {
   Paper,
   Avatar,
   InputAdornment,
-  Fade,
 } from "@mui/material";
 import {
   SportsCricket as CricketIcon,
   PersonAdd as AddIcon,
-  CheckCircle as SuccessIcon,
 } from "@mui/icons-material";
 import { useAppDispatch } from "../app/hooks";
-import { addPlayer } from "../features/auctionPlayer/auctionPlayerSlice";
+import { addPlayerToAuction } from "../features/auctionPlayer/auctionPlayerSlice";
+import GlobalSnackBar from "../layout/GlobalSnackBar";
 
 type PlayerRole = "Batter" | "Bowler" | "All-rounder";
 type PlayerHandedness = "LHB" | "RHB";
@@ -43,7 +42,7 @@ const AddPlayers: React.FC = () => {
   const [handedness, setHandedness] = useState<PlayerHandedness>("RHB");
   const [profilePicture, setProfilePicture] = useState<string>("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -59,6 +58,10 @@ const AddPlayers: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleCloseSnackBar = () => {
+    setOpen(false);
+  };
+
   const handleAddPlayer = () => {
     if (!validateForm()) return;
 
@@ -72,11 +75,10 @@ const AddPlayers: React.FC = () => {
       newPlayer.handedness = handedness;
     }
 
-    dispatch(addPlayer(newPlayer));
+    dispatch(addPlayerToAuction(newPlayer));
 
     setPlayers([...players, newPlayer]);
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 2000);
+    setOpen(true);
     resetForm();
   };
 
@@ -209,21 +211,12 @@ const AddPlayers: React.FC = () => {
             </Button>
           </Grid>
         </Grid>
-
-        <Fade in={showSuccess}>
-          <Box
-            sx={{
-              mt: 2,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "success.main",
-            }}
-          >
-            <SuccessIcon sx={{ mr: 1 }} />
-            <Typography>Player added successfully!</Typography>
-          </Box>
-        </Fade>
+        <GlobalSnackBar
+          open={open}
+          handleClose={handleCloseSnackBar}
+          message="Player added successfully!"
+          severity="success"
+        />
 
         {players.length > 0 && (
           <Box sx={{ mt: 6 }}>

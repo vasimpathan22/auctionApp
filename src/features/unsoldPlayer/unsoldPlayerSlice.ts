@@ -9,14 +9,19 @@ const unsoldPlayerSlice = createSlice({
   name: "unsoldPlayer",
   initialState,
   reducers: {
-    addUnsoldPlayer: (state, action: PayloadAction<Player>) => {
+    addUnsoldPlayerToUnsoldList: (state, action: PayloadAction<Player>) => {
       state.push(action.payload);
       auctionService.storeUnsoldPlayers(state);
+    },
+    resetUnsoldPlayers: () => {
+      auctionService.resetUnsoldPlayers();
+      return initialState;
     },
   },
 });
 
 export const getAllUnsoldPlayers = (state: RootState) => state.unsold;
 
-export const { addUnsoldPlayer } = unsoldPlayerSlice.actions;
+export const { addUnsoldPlayerToUnsoldList, resetUnsoldPlayers } =
+  unsoldPlayerSlice.actions;
 export default unsoldPlayerSlice.reducer;

@@ -17,9 +17,20 @@ import {
   Divider,
   styled,
 } from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
-import DesignServicesIcon from "@mui/icons-material/DesignServices";
-import SecurityIcon from "@mui/icons-material/Security";
+import {
+  Settings,
+  GroupAdd,
+  RestartAlt,
+  ManageAccounts,
+} from "@mui/icons-material";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { addUnsoldPlayersToAuction } from "../features/auctionPlayer/auctionPlayerSlice";
+import {
+  getAllUnsoldPlayers,
+  resetUnsoldPlayers,
+} from "../features/unsoldPlayer/unsoldPlayerSlice";
+import GlobalSnackBar from "../layout/GlobalSnackBar";
+import { useNavigate } from "react-router-dom";
 
 const StyledMenuButton = styled(Button)(({ theme }) => ({
   minWidth: "auto",
@@ -51,12 +62,47 @@ const Puller = styled(Box)(({ theme }) => ({
 }));
 
 const SettingsMenu = () => {
-  const [open, setOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const handleClick = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const dispatch = useAppDispatch();
+  const unsoldPlayers = useAppSelector(getAllUnsoldPlayers);
+
+  const handleSnackBarClose = () => setOpenSnackBar(false);
+  const handleClick = () => setOpenMenu(true);
+  const handleClose = () => setOpenMenu(false);
+
+  const handleManagePlayers = () => {
+    navigate("/managePlayers");
+    handleClose();
+  };
+
+  const handleResetData = () => {
+    console.log("Reset Data");
+    handleClose();
+  };
+
+  const addUnsoldPlayerToAuction = () => {
+    try {
+      if (unsoldPlayers.length === 0) {
+        setMessage("No unsold players to add to auction");
+        return;
+      }
+      dispatch(addUnsoldPlayersToAuction(unsoldPlayers));
+      setMessage(`Added ${unsoldPlayers.length} unsold player to auction`);
+      dispatch(resetUnsoldPlayers());
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setOpenSnackBar(true);
+      handleClose();
+    }
+  };
 
   return (
     <Box
@@ -70,16 +116,22 @@ const SettingsMenu = () => {
       <StyledMenuButton
         aria-label="settings"
         onClick={handleClick}
-        startIcon={<SettingsIcon fontSize="small" />}
+        startIcon={<Settings fontSize="small" />}
       >
         Settings
       </StyledMenuButton>
+      <GlobalSnackBar
+        open={openSnackBar}
+        handleClose={handleSnackBarClose}
+        message={message}
+        severity="success"
+      />
 
       {/* Desktop Dialog */}
       {isMobile ? (
         <SwipeableDrawer
           anchor="bottom"
-          open={open}
+          open={openMenu}
           onClose={handleClose}
           onOpen={handleClick}
           disableSwipeToOpen={false}
@@ -98,15 +150,14 @@ const SettingsMenu = () => {
             <List disablePadding>
               <ListItem disablePadding>
                 <ListItemButton
-                  onClick={() => console.log("Advanced customization")}
+                  onClick={addUnsoldPlayerToAuction}
                   sx={{ py: 2, borderRadius: 1 }}
                 >
                   <ListItemIcon sx={{ minWidth: 40 }}>
-                    <DesignServicesIcon color="primary" />
+                    <GroupAdd color="primary" />
                   </ListItemIcon>
                   <ListItemText
-                    primary="Option A"
-                    secondary="Advanced customization"
+                    primary="Add unsold players to auction"
                     slotProps={{ primary: { fontWeight: 500 } }}
                   />
                 </ListItemButton>
@@ -114,15 +165,29 @@ const SettingsMenu = () => {
               <Divider sx={{ my: 1 }} />
               <ListItem disablePadding>
                 <ListItemButton
-                  onClick={() => console.log("Security settings")}
+                  onClick={handleManagePlayers}
                   sx={{ py: 2, borderRadius: 1 }}
                 >
                   <ListItemIcon sx={{ minWidth: 40 }}>
-                    <SecurityIcon color="primary" />
+                    <ManageAccounts color="primary" />
                   </ListItemIcon>
                   <ListItemText
-                    primary="Option B"
-                    secondary="Security settings"
+                    primary="Manage Players"
+                    slotProps={{ primary: { fontWeight: 500 } }}
+                  />
+                </ListItemButton>
+              </ListItem>
+              <Divider sx={{ my: 1 }} />
+              <ListItem disablePadding>
+                <ListItemButton
+                  sx={{ py: 2, borderRadius: 1 }}
+                  onClick={handleResetData}
+                >
+                  <ListItemIcon sx={{ minWidth: 40 }}>
+                    <RestartAlt color="primary" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Reset all app data"
                     slotProps={{ primary: { fontWeight: 500 } }}
                   />
                 </ListItemButton>
@@ -145,21 +210,20 @@ const SettingsMenu = () => {
           </Box>
         </SwipeableDrawer>
       ) : (
-        <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+        <Dialog open={openMenu} onClose={handleClose} maxWidth="xs" fullWidth>
           <DialogTitle sx={{ fontWeight: 600 }}>Settings</DialogTitle>
           <DialogContent dividers>
             <List disablePadding>
               <ListItem disablePadding>
                 <ListItemButton
-                  onClick={() => console.log("Advanced customization")}
+                  onClick={addUnsoldPlayerToAuction}
                   sx={{ py: 1.5, borderRadius: 1 }}
                 >
                   <ListItemIcon sx={{ minWidth: 40 }}>
-                    <DesignServicesIcon color="primary" />
+                    <GroupAdd color="primary" />
                   </ListItemIcon>
                   <ListItemText
-                    primary="Option A"
-                    secondary="Advanced customization"
+                    primary="Add unsold players to auction"
                     slotProps={{ primary: { fontWeight: 500 } }}
                   />
                 </ListItemButton>
@@ -167,15 +231,29 @@ const SettingsMenu = () => {
               <Divider sx={{ my: 1 }} />
               <ListItem disablePadding>
                 <ListItemButton
-                  onClick={() => console.log("Security settings")}
+                  onClick={handleManagePlayers}
                   sx={{ py: 1.5, borderRadius: 1 }}
                 >
                   <ListItemIcon sx={{ minWidth: 40 }}>
-                    <SecurityIcon color="primary" />
+                    <ManageAccounts color="primary" />
                   </ListItemIcon>
                   <ListItemText
-                    primary="Option B"
-                    secondary="Security settings"
+                    primary="Manage Players"
+                    slotProps={{ primary: { fontWeight: 500 } }}
+                  />
+                </ListItemButton>
+              </ListItem>
+              <Divider sx={{ my: 1 }} />
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={handleResetData}
+                  sx={{ py: 1.5, borderRadius: 1 }}
+                >
+                  <ListItemIcon sx={{ minWidth: 40 }}>
+                    <RestartAlt color="primary" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Reset all app data"
                     slotProps={{ primary: { fontWeight: 500 } }}
                   />
                 </ListItemButton>

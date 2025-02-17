@@ -13,7 +13,11 @@ class AuctionService {
     return [];
   }
 
-  storePlayersOfAuction(players: Player[]) {
+  resetUnsoldPlayers() {
+    localStorage.removeItem("unsoldPlayers");
+  }
+
+  storePlayersForAuction(players: Player[]) {
     localStorage.setItem("auctionPlayers", JSON.stringify(players));
   }
 
