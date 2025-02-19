@@ -1,10 +1,13 @@
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../app/hooks";
+import { enviroment } from "../util/enviroment";
+import { getAllAuctionPlayers } from "../features/auctionPlayer/auctionPlayerSlice";
 
 const Home = () => {
   const navigate = useNavigate();
-  const auctionPlayers = useAppSelector((state) => state.auction);
+  const { leagueName } = enviroment;
+  const auctionPlayers = useAppSelector(getAllAuctionPlayers);
 
   const handleAddPlayersClick = () => {
     navigate("/addplayer");
@@ -53,7 +56,7 @@ const Home = () => {
           textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
         }}
       >
-        Pratiti Premier League
+        {leagueName}
       </Typography>
 
       {/* Buttons */}

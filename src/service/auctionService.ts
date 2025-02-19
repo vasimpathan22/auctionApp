@@ -1,8 +1,6 @@
 import { Player } from "../components/AddPlayers";
 class AuctionService {
-  constructor() {
-    console.log("Use this service to managae auction");
-  }
+  constructor() {}
   storeUnsoldPlayers(players: Player[]) {
     localStorage.setItem("unsoldPlayers", JSON.stringify(players));
   }
@@ -25,6 +23,10 @@ class AuctionService {
     const auctionPlayers = localStorage.getItem("auctionPlayers");
     if (auctionPlayers) return JSON.parse(auctionPlayers) as Player[];
     return [];
+  }
+
+  resetAuctionPlayers() {
+    localStorage.removeItem("auctionPlayers");
   }
 }
 

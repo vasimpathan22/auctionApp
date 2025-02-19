@@ -130,6 +130,7 @@ const AddPlayers: React.FC = () => {
                 value={profilePicture}
                 onChange={(e) => setProfilePicture(e.target.value)}
                 type="url"
+                error={!!errors.profilePicture}
                 helperText={errors.profilePicture}
                 slotProps={{
                   input: {

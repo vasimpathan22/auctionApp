@@ -24,6 +24,10 @@ const auctionPlayerSlice = createSlice({
       state.push(...action.payload);
       auctionService.storePlayersForAuction(state);
     },
+    resetAuctionPlayers: () => {
+      auctionService.resetAuctionPlayers();
+      return initialState;
+    },
   },
 });
 
@@ -33,5 +37,6 @@ export const {
   deletePlayerFromAuction,
   addPlayerToAuction,
   addUnsoldPlayersToAuction,
+  resetAuctionPlayers,
 } = auctionPlayerSlice.actions;
 export default auctionPlayerSlice.reducer;

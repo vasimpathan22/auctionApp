@@ -24,6 +24,7 @@ import {
   AccountCircle,
   Menu as MenuIcon,
 } from "@mui/icons-material";
+import { enviroment } from "../util/enviroment";
 
 type Props = {
   children: ReactNode;
@@ -35,6 +36,7 @@ const drawerWidth = 240;
 const MainLayout = ({ children, menuItems }: Props) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { appName } = enviroment;
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -92,7 +94,7 @@ const MainLayout = ({ children, menuItems }: Props) => {
               color: theme.palette.primary.main,
             }}
           >
-            Auction App
+            {appName}
           </Typography>
 
           <IconButton color="inherit" onClick={handleProfileClick}>
@@ -101,6 +103,71 @@ const MainLayout = ({ children, menuItems }: Props) => {
         </Toolbar>
       </AppBar>
 
+      {/* Sidebar */}
+      <Drawer
+        variant="temporary"
+        open={isSidebarOpen}
+        onClose={() => toggleDrawer(false)}
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: drawerWidth,
+            boxSizing: "border-box",
+            borderRight: "none",
+            boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
+            paddingTop: "env(safe-area-inset-top)",
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+          },
+        }}
+      >
+        <Toolbar /> {/* Spacer for AppBar */}
+        <Box sx={{ overflow: "hidden" }}>
+          <List>
+            {menuItems.map((item) => (
+              <ListItem key={item.text}>
+                <ListItemButton
+                  selected={location.pathname === item.path}
+                  onClick={() => {
+                    handleMenuItemClick(item.path);
+                    toggleDrawer(false);
+                  }}
+                  sx={{
+                    "&:hover": { backgroundColor: theme.palette.action.hover },
+                    borderRadius: "8px",
+                    "&.Mui-selected": {
+                      backgroundColor: theme.palette.action.selected,
+                    },
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: "40px" }}>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.text}
+                    slotProps={{ primary: { sx: { fontWeight: "medium" } } }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
+
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 0,
+          paddingTop: "env(safe-area-inset-top)",
+        }}
+      >
+        <Toolbar />
+        {children}
+      </Box>
+
+      {/* Profile Menu*/}
       <Menu
         anchorEl={anchorEl}
         anchorOrigin={{
@@ -200,70 +267,6 @@ const MainLayout = ({ children, menuItems }: Props) => {
           Logout
         </MenuItem>
       </Menu>
-
-      {/* Sidebar */}
-      <Drawer
-        variant="temporary"
-        open={isSidebarOpen}
-        onClose={() => toggleDrawer(false)}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-            borderRight: "none",
-            boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
-            paddingTop: "env(safe-area-inset-top)",
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-          },
-        }}
-      >
-        <Toolbar /> {/* Spacer for AppBar */}
-        <Box sx={{ overflow: "hidden" }}>
-          <List>
-            {menuItems.map((item) => (
-              <ListItem key={item.text}>
-                <ListItemButton
-                  selected={location.pathname === item.path}
-                  onClick={() => {
-                    handleMenuItemClick(item.path);
-                    toggleDrawer(false);
-                  }}
-                  sx={{
-                    "&:hover": { backgroundColor: theme.palette.action.hover },
-                    borderRadius: "8px",
-                    "&.Mui-selected": {
-                      backgroundColor: theme.palette.action.selected,
-                    },
-                  }}
-                >
-                  <ListItemIcon sx={{ minWidth: "40px" }}>
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.text}
-                    slotProps={{ primary: { sx: { fontWeight: "medium" } } }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
-
-      {/* Main Content */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 0,
-          paddingTop: "env(safe-area-inset-top)",
-        }}
-      >
-        <Toolbar />
-        {children}
-      </Box>
     </Box>
   );
 };

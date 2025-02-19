@@ -24,7 +24,10 @@ import {
   ManageAccounts,
 } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { addUnsoldPlayersToAuction } from "../features/auctionPlayer/auctionPlayerSlice";
+import {
+  addUnsoldPlayersToAuction,
+  resetAuctionPlayers,
+} from "../features/auctionPlayer/auctionPlayerSlice";
 import {
   getAllUnsoldPlayers,
   resetUnsoldPlayers,
@@ -83,7 +86,9 @@ const SettingsMenu = () => {
   };
 
   const handleResetData = () => {
-    console.log("Reset Data");
+    localStorage.clear();
+    dispatch(resetAuctionPlayers());
+    dispatch(resetUnsoldPlayers());
     handleClose();
   };
 
@@ -210,7 +215,21 @@ const SettingsMenu = () => {
           </Box>
         </SwipeableDrawer>
       ) : (
-        <Dialog open={openMenu} onClose={handleClose} maxWidth="xs" fullWidth>
+        <Dialog
+          open={openMenu}
+          onClose={handleClose}
+          maxWidth="xs"
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: "16px",
+              background:
+                theme.palette.mode === "dark"
+                  ? "linear-gradient(145deg, #1E1E1E, #2C2C2C)"
+                  : "linear-gradient(145deg, #f5f5f5, #fff)",
+            },
+          }}
+        >
           <DialogTitle sx={{ fontWeight: 600 }}>Settings</DialogTitle>
           <DialogContent dividers>
             <List disablePadding>
